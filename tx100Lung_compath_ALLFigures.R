@@ -5,8 +5,8 @@
 
 #### ###  #### ###
 
-setwd('X:/Dropbox (ICR)/yuanlab/Projects/lung/tracerx')
-path = file.path("X:/Dropbox (ICR)/yuanlab/Projects/lung/tracerx/tracerx100/results/LungTx1Figures/")
+setwd('X:/Dropbox (ICR)/yuanlab/Projects/lung')
+path = file.path("./tracerx/tracerx100/results/LungTx1Figures/")
 
 source('./code/Kfun.R')
 library("survival")
@@ -25,9 +25,9 @@ library(RColorBrewer)
 library(reshape2)
 
 #LOAD - this is just an example, a similar data summary stats file is loaded serveal times 
-load("./tracerx100/results/trait/trait5_08Oct2018.RData")
+load("./tracerx/tracerx100/results/trait/trait5_08Oct2018.RData")
 #mutations summary from Jamal-Hanjani, NEJM 2017
-mut <- read.csv("./tracerx100/data/tracerx100tableS3Mutations.csv", stringsAsFactors = F)
+mut <- read.csv("./tracerx/tracerx100/data/tracerx100tableS3Mutations.csv", stringsAsFactors = F)
 
 #definitions:
 #diagnostic: summary file for all diangostic immune scores for tx100 patients, 100 patients
@@ -60,7 +60,7 @@ diagnostic$Histology[is.na(diagnostic$Histology)] <- "Other"
 
 #load pathology Stromal TILs by Roberto and co
 diagnostic$ATL_fibroRatio = diagnostic$ATL/diagnostic$fibroblasts
-pathTILs <- read.csv(file="X:/Dropbox (ICR)/TRACERx-lung/tracerx100/tx100.roberto.scores.csv", stringsAsFactors = F)
+pathTILs <- read.csv(file="./tracerx/tracerx100/tx100.roberto.scores.csv", stringsAsFactors = F)
 pathTILs$PATIENT_SCREENING_ID = sub("(.{3})(.*)", "\\10\\2", pathTILs$PATIENT_SCREENING_ID) #add 0 in LTX
 diagnosticpathTILs <- merge(diagnostic, pathTILs, by = "PATIENT_SCREENING_ID", all.y = T)
 
@@ -112,7 +112,7 @@ ggscatter(regionalDNA, x = "VAF.purity", y = "tumour_per", cor.coef = T)
 
 
 #Danaher cd8 signature from RNA
-load("X:/Dropbox (ICR)/yuanlab/Projects/lung/tracerx/tracerx100/data/cd8_and_lohhla.RData")
+load("./tracerx/tracerx100/data/cd8_and_lohhla.RData")
 colnames(cd8.scores)[which(names(cd8.scores) == "RegionID")] <- "file_name"
 cd8.scores$file_name = gsub(":", "_T1", cd8.scores$file_name)
 regional$Histology[regional$Histology== "Invasive adenocarcinoma"] <- "LUAD"
@@ -147,7 +147,7 @@ CELLS <- CELLS[!CELLS %in% "Da171.csv"]
 options(stringsAsFactors = FALSE)
 TTF1_list<- vector("list", length(CELLS))
 names(TTF1_list) <- CELLS
-IHCDir2<-"./tracerx100/results/tx1_validation/csv/TTF1-20180530/detected_points/Manualp_3_TTF1.tif"
+IHCDir2<-"./tracerx/tracerx100/results/tx1_validation/csv/TTF1-20180530/detected_points/Manualp_3_TTF1.tif"
 for (iCELL in CELLS){
   limit <- read.csv(paste0(IHCDir, '/',iCELL))
   Datmp2 <- read.csv(paste0(IHCDir2, '/',iCELL))
@@ -164,7 +164,7 @@ CELLS <- CELLS[!CELLS %in% "Da171.csv"]
 options(stringsAsFactors = FALSE)
 HETTF1_list<- vector("list", length(CELLS))
 names(HETTF1_list) <- CELLS
-IHCDir2<-"./tracerx100/results/tx1_validation/csv/HETTF1-20180327/detected_points/3_HE.ndpi"
+IHCDir2<-"./tracerx/tracerx100/results/tx1_validation/csv/HETTF1-20180327/detected_points/3_HE.ndpi"
 for (iCELL in CELLS){
   limit <- read.csv(paste0(IHCDir, '/',iCELL))
   Datmp2 <- read.csv(paste0(IHCDir2, '/',iCELL))
@@ -213,7 +213,7 @@ dev.off()
 ##fig 2, immune classification and survival for number of immune cold regions + fig S7
 ########################################################################################################################
 #make the same dotplot for all 275 regions, 85 patients, this is used in figs 2 and 6
-load("./tracerx100/results/trait/trait5_08Oct2018.RData")
+load("./tracerx/tracerx100/results/trait/trait5_08Oct2018.RData")
 tx$Histology[tx$histology_group == "Squamous cell carcinoma"] <- "Squamous-cell carcinoma"
 tx$Histology[tx$histology_group == "Adenocarcinoma"] <- "Adenocarcinoma"
 tx$Histology[tx$histology_group=="Pleomorphic carcinoma"] <- "Z"
@@ -243,7 +243,7 @@ ggdotchart(regional, x = "PublicationID", y = "lymphocytes_per",
            ggtheme = theme_pubr())
 
 #now the survival analysis using the number of cold regions
-load("./tracerx100/results/trait/trait5_15May2018.RData")
+load("./tracerx/tracerx100/results/trait/trait5_15May2018.RData")
 diagnosticLUAD <- diagnostic[diagnostic$histology_group=="Adenocarcinoma",]
 diagnosticLUSC <- diagnostic[diagnostic$histology_group=="Squamous cell carcinoma",]
 geneticLUAD <- genetic[genetic$histology_group=="Adenocarcinoma",]
@@ -274,7 +274,7 @@ txH2LUADLUSC <- txH2[ which(txH2$Histology=="LUAD"
 txH2LUADLUSC$Histology <- factor(txH2LUADLUSC$Histology)
 
 #include number of tumor regions/samples, this is from the DNA paper
-num = readRDS("./tracerx100/data/number_regions.RDS")
+num = readRDS("./tracerx/tracerx100/data/number_regions.RDS")
 num$REGTrialNo = rownames(num)
 names(num) <- c("nTotalRegions", "nRNARegions", "PATIENT_SCREENING_ID")
 num$PATIENT_SCREENING_ID = sub("(.{3})(.*)", "\\10\\2", num$PATIENT_SCREENING_ID)
@@ -326,7 +326,7 @@ fit <- coxph(Surv(DFS_time_days, DFS_censor_variable)~rCold+age+sex+pack_years_c
 ggforest(fit, data=txH2LUADLUSC)
 
 #supp test S7c - as continuous, testing independce against other scores
-regional = read.csv("./tracerx100/results/trait/100xRegional_TGene.csv", stringsAsFactors = F )
+regional = read.csv("./tracerx/tracerx100/results/trait/100xRegional_TGene.csv", stringsAsFactors = F )
 ascat <- regional %>% group_by(PublicationID) %>%
   summarise(mean_ASCAT.purity=mean(ASCAT.purity))
 txH2LUADLUSC <- merge(txH2LUADLUSC, ascat, all.x=T)
@@ -372,7 +372,7 @@ ggforest(fit, data=txH2LUADLUSC)
 
 ##fig 2, genomic and immune distances of paired hot-hot and cold-cold regions
 ########################################################################################################################
-load("./tracerx100/results/trait/trait5_08Oct2018.RData")
+load("./tracerx/tracerx100/results/trait/trait5_08Oct2018.RData")
 regional <- colNA(regional, "PublicationID")
 regional <- subset(regional, select = c(PublicationID, region, lymphocytes_per))
 regional$region <- substring(regional$region, 3)
@@ -408,7 +408,7 @@ for (i in 1:length(lymL)){
 #for each patient in a list, we make the cols are regions and rows as muts (1=mutated, 0=not)
 #then simply take the Ecu. dist. for every two pairs
 
-mut <- read.csv("./tracerx100/data/tracerx100tableS3Mutations.csv", stringsAsFactors = F)
+mut <- read.csv("./tracerx/tracerx100/data/tracerx100tableS3Mutations.csv", stringsAsFactors = F)
 colnames(mut)[which(names(mut) == "SampleID")] <- "PublicationID"
 mut <- subset(mut, select = c(MutationID, PublicationID, Hugo_Symbol, RegionSum))
 mutL <- vector("list", length(idsToGO))
@@ -470,7 +470,7 @@ detach("package:plyr", unload=TRUE)
 #now we subset for hothot and coldcold
 #hothot vs coldcold
 r=regional
-load("./tracerx100/results/trait/trait5_08Oct2018.RData")
+load("./tracerx/tracerx100/results/trait/trait5_08Oct2018.RData")
 regional$region <- substring(regional$region, 3)
 r = merge(r, regional[, c(4, 5, 65)], by = c("PublicationID","region"), all.x = T)
 
@@ -517,7 +517,7 @@ dev.off()
 
 ##fig S5, concordance of deep learning immune classification vs RNA
 ########################################################################################################################
-regional = read.csv("./tracerx100/results/trait/100xRegional_TGene.csv", stringsAsFactors = F )
+regional = read.csv("./tracerx/tracerx100/results/trait/100xRegional_TGene.csv", stringsAsFactors = F )
 regional$Histology[regional$Histology == "Squamous cell carcinoma"] <- "Squamous-cell carcinoma"
 regional$Histology[regional$Histology == "Invasive adenocarcinoma"] <- "Adenocarcinoma"
 regional$Histology[regional$Histology=="Carcinosarcoma"] <- "Z"
@@ -525,7 +525,7 @@ regional$Histology[regional$Histology=="Adenosquamous carcinoma"] <- "Z"
 regional$Histology[regional$Histology=="Large Cell Neuroendocrine"] <- "Z"
 regional = regional[order(regional$lymphocytes_per, decreasing = F),]
 regional = regional[order(regional$Histology, decreasing = F),]
-RNA =readRDS("./tracerx100/data/RNA/20180926-immune-clusters-rnaseq.RDS")
+RNA =readRDS("./tracerx/tracerx100/data/RNA/20180926-immune-clusters-rnaseq.RDS")
 RNA$sample = gsub(":", "_", rownames(RNA))
 r = regional
 r = merge(r, RNA, all.x=T)
@@ -551,7 +551,7 @@ ggdotchart(r, x = "PublicationID", y = "lymphocytes_per",
 dev.off()
 
 #boxplots for key immune scores for deep learning based and RNA based immune classifications
-regional = read.csv("./tracerx100/results/trait/100xRegional_TGene.csv", stringsAsFactors = F )
+regional = read.csv("./tracerx/tracerx100/results/trait/100xRegional_TGene.csv", stringsAsFactors = F )
 regional <- regional[regional$immuneClass_2=="hot" | regional$immuneClass_2=="cold",] 
 comList <- list( c("hot", "cold"))
 regional <- regional[order(regional$immuneClass_2),] 
@@ -619,7 +619,7 @@ ggscatter(John, x = "lymphocytes_per", y = "pathology_LymEstimate", add = "reg.l
 
 ##fig S6, distribution of lym% over stage, histology 
 ########################################################################################################################
-load("./tracerx100/results/trait/trait5_15May2018.RData")
+load("./tracerx/tracerx100/results/trait/trait5_15May2018.RData")
 diagnosticLUAD <- diagnostic[diagnostic$histology_group=="Adenocarcinoma",]
 diagnosticLUSC <- diagnostic[diagnostic$histology_group=="Squamous cell carcinoma",]
 geneticLUAD <- genetic[genetic$histology_group=="Adenocarcinoma",]
@@ -666,7 +666,7 @@ p2<-ggboxplot(txH2LUADLUSC, x = "pathologyTNM2", y = "lymphocytes_per_mean", col
   stat_compare_means(label = "p.signif",method = "t.test", paired = F, ref.group = ".all.", hide.ns = F)+
   theme(legend.position="") + theme(text = element_text(size=18)) 
 
-pdf(file="./tracerx100/results/Regional/lymLandscpae_SD_density_Stage.pdf", width = 10 , height = 6)
+pdf(file="./tracerx/tracerx100/results/Regional/lymLandscpae_SD_density_Stage.pdf", width = 10 , height = 6)
 ggdensity(txH2LUADLUSC, x = "lymphocytes_per_sd", color = "Histology", palette = c("#98AED6", "#682A45"),
              add = "mean", rug = TRUE)
 ggdensity(txH2LUADLUSC, x = "lymphocytes_per_sd", color = "pathologyTNM", 
@@ -679,9 +679,9 @@ dev.off()
 
 ##fig S8, corr of lym% in regional vs diagnsotic samples + fig S9b lym% normal vs lym% tumor min
 ########################################################################################################################
-diagnostic = read.csv("./tracerx100/results/trait/100xDiagnostic.csv", stringsAsFactors = F)
-tx = read.csv("./tracerx100/results/trait/100xCombined_2.csv", stringsAsFactors = F)
-regional = read.csv("./tracerx100/results/trait/100xRegional_TGene.csv", stringsAsFactors = F)
+diagnostic = read.csv("./tracerx/tracerx100/results/trait/100xDiagnostic.csv", stringsAsFactors = F)
+tx = read.csv("./tracerx/tracerx100/results/trait/100xCombined_2.csv", stringsAsFactors = F)
+regional = read.csv("./tracerx/tracerx100/results/trait/100xRegional_TGene.csv", stringsAsFactors = F)
 r <- regional[, c(4, 12)]
 r <- r %>% group_by(PublicationID) %>%
   summarize(regional_min = min(lymphocytes_per),
@@ -691,7 +691,7 @@ diL <- diagnostic[, c(3, 37, 46:48)]
 colnames(diL)[which(names(diL) == "lymphocytes_per")] <- "diagnostic"
 l <- merge(diL, r, all.x = T)
 l <- colNA(l, "regional_min")
-load("./tracerx100/results/trait/trait5_15May2018.RData")
+load("./tracerx/tracerx100/results/trait/trait5_15May2018.RData")
 l <- merge(l, tx[, c(2,86)], all.x=T)
 l$Histology[l$histology_group== "Adenocarcinoma"] <- "LUAD"
 l$Histology[l$histology_group== "Squamous cell carcinoma"] <- "LUSC"
@@ -728,19 +728,19 @@ ggscatter(l, x = "cd8_per", y = "regional_min", cor.coef = T)
 
 ## Normal
 
-diagnostic = read.csv("./tracerx100/results/trait/100xDiagnostic.csv", stringsAsFactors = F)
-tx = read.csv("./tracerx100/results/trait/100xCombined_2.csv", stringsAsFactors = F)
-regional = read.csv("./tracerx100/results/trait/100xRegional.csv", stringsAsFactors = F)
+diagnostic = read.csv("./tracerx/tracerx100/results/trait/100xDiagnostic.csv", stringsAsFactors = F)
+tx = read.csv("./tracerx/tracerx100/results/trait/100xCombined_2.csv", stringsAsFactors = F)
+regional = read.csv("./tracerx/tracerx100/results/trait/100xRegional.csv", stringsAsFactors = F)
 regional <- colNA(regional, "PublicationID")
 N <- regional[regional$region=="N",]
 N <- N[, c(1, 10)]
 colnames(N)[which(names(N) == "lymphocytes_per")] <- "normal"
-regional = read.csv("./tracerx100/results/trait/100xRegional.csv", stringsAsFactors = F)
+regional = read.csv("./tracerx/tracerx100/results/trait/100xRegional.csv", stringsAsFactors = F)
 regional <- colNA(regional, "PublicationID")
 LN <- regional[regional$region=="LN1" | regional$region=="LN2",]
 LN <- LN[, c(1, 10)]
 colnames(LN)[which(names(LN) == "lymphocytes_per")] <- "lymph_node"
-regional = read.csv("./tracerx100/results/trait/100xRegional_TGene.csv", stringsAsFactors = F)
+regional = read.csv("./tracerx/tracerx100/results/trait/100xRegional_TGene.csv", stringsAsFactors = F)
 regional <- regional[regional$immuneClass_2=="hot" | regional$immuneClass_2=="cold",] 
 rP <- regional[, c(1, 3:4, 11, 64)]
 rP <- merge(rP, N, all.x = T)
@@ -783,21 +783,21 @@ dev.off()
 ########################################################################################################################
 
 #need to load TCGA:
-luad <- read.csv(file = "/Users/kjabbar/Dropbox (ICR)/yuanlab/Projects/lung/tcga/dev/immuneScoringPaper/LUADSummary_AllSlides.csv", stringsAsFactors = F)
-lusc <- read.csv(file = "/Users/kjabbar/Dropbox (ICR)/yuanlab/Projects/lung/tcga/dev/immuneScoringPaper/LUSCSummary_AllSlides.csv", stringsAsFactors = F)
+luad <- read.csv(file = "./tcga/dev/immuneScoringPaper/LUADSummary_AllSlides.csv", stringsAsFactors = F)
+lusc <- read.csv(file = "./tcga/dev/immuneScoringPaper/LUSCSummary_AllSlides.csv", stringsAsFactors = F)
 luad$PATIENT_SCREENING_ID <- substr(luad$file_name, 1, 12)
 lusc$PATIENT_SCREENING_ID <- substr(lusc$file_name, 1, 12)
 luad = luad[, c(19, 17)]
 lusc = lusc[, c(19, 17)]
-load("/Users/kjabbar/Dropbox (ICR)/yuanlab/Projects/lung/tcga/trait/TCGAmin.RData")
+load("./tcga/trait/TCGAmin.RData")
 luad = luad[luad$PATIENT_SCREENING_ID %in% LUADmin$bcr_patient_barcode,]
 lusc = lusc[lusc$PATIENT_SCREENING_ID %in% LUSCmin$bcr_patient_barcode,]
 luad = uniqueLTX_survPrepare2(luad)
 lusc = uniqueLTX_survPrepare2(lusc)
 names(luad)[names(luad) == "PATIENT_SCREENING_ID"] <- "bcr_patient_barcode"
 names(lusc)[names(lusc) == "PATIENT_SCREENING_ID"] <- "bcr_patient_barcode"
-LUSCmean = read.csv("/Users/kjabbar/Dropbox (ICR)/yuanlab/Projects/lung/tcga/dev/immuneScoringPaper/results/LUSCmean.csv")
-LUADmean = read.csv("/Users/kjabbar/Dropbox (ICR)/yuanlab/Projects/lung/tcga/dev/immuneScoringPaper/results/LUADmean.csv")
+LUSCmean = read.csv("./tcga/dev/immuneScoringPaper/results/LUSCmean.csv")
+LUADmean = read.csv("./tcga/dev/immuneScoringPaper/results/LUADmean.csv")
 LUSCclin = LUSCmean[, c(8:10, 13, 22:26)]
 LUADclin = LUADmean[, c(8:10, 13, 22:26)]
 luad= merge(luad, LUADclin, all.x=T)
@@ -829,7 +829,7 @@ summaryPsTCGA <- data.frame(
 summaryPsTCGA$PVal_log10 <- -log10(summaryPsTCGA$PVal)
 
 #now the same for tx
-load("./tracerx100/results/trait/trait5_15May2018.RData")
+load("./tracerx/tracerx100/results/trait/trait5_15May2018.RData")
 diagnosticLUAD <- diagnostic[diagnostic$histology_group=="Adenocarcinoma",]
 diagnosticLUSC <- diagnostic[diagnostic$histology_group=="Squamous cell carcinoma",]
 geneticLUAD <- genetic[genetic$histology_group=="Adenocarcinoma",]
@@ -923,7 +923,7 @@ dev.off()
 
 ##fig 3, tumor-normal divergence and survival analysis
 ########################################################################################################################
-load("./tracerx100/results/trait/trait5_08Oct2018.RData")
+load("./tracerx/tracerx100/results/trait/trait5_08Oct2018.RData")
 txH2=merge(txH2, normal, all.x = T)
 txH2LUAD=merge(txH2LUAD, normal, all.x = T)
 txH2LUSC=merge(txH2LUSC, normal, all.x = T)
@@ -1045,7 +1045,7 @@ dev.off()
 
 ##fig S9a, levels of lym infiltration in normal lung vs tumor
 ########################################################################################################################
-load("./tracerx100/results/trait/trait5_08Oct2018.RData")
+load("./tracerx/tracerx100/results/trait/trait5_08Oct2018.RData")
 normal = colNA(normal, "normal")
 normal = merge(normal, txH2[, c(2, 106)])
 normal = normal[, -c(6:7)]
@@ -1076,7 +1076,7 @@ ggboxplot(r[r$Histology=="LUSC",], x = "variable", y = "value", color = "variabl
 
 ##fig 4 + fig S10a, spatial immune subsets in tx LUAD  
 ########################################################################################################################
-tx = read.csv("./tracerx100/results/trait/100xCombined_5.csv", stringsAsFactors = F)
+tx = read.csv("./tracerx/tracerx100/results/trait/100xCombined_5.csv", stringsAsFactors = F)
 diagnostic = read.csv("./tracerx100/results/trait/100xDiagnostic.csv", stringsAsFactors = F)
 diagnostic$cd8foxp3Ratio = diagnostic$cd8_per/diagnostic$foxp3_per
 diagnostic$ATL_fibroRatio <- diagnostic$ATL/diagnostic$fibroblasts
@@ -1087,8 +1087,8 @@ mydist <- function(row){
   dists <- (row[["x"]] - df2$x)^2 + (row[["y"]]- df2$y)^2
   return(cbind(df2[which.min(dists),], distance = min(dists)))
 }
-IHCDir<-'./tracerx100/results/Diagnostic/ATLNeo/LUAD_markedATL/classification/csv/cellPos/'
-TILDir<-'./tracerx100/results/Diagnostic/ATLNeo/LUAD_TILsCellPos/'
+IHCDir<-'./tracerx/tracerx100/results/Diagnostic/ATLNeo/LUAD_markedATL/classification/csv/cellPos/'
+TILDir<-'./tracerx/tracerx100/results/Diagnostic/ATLNeo/LUAD_TILsCellPos/'
 CELLS<-dir(path = IHCDir,pattern = '*.csv')
 options(stringsAsFactors = FALSE)
 
@@ -1158,9 +1158,9 @@ pSummin = rbind(p1,p2,p3,p4,p5,p6,p7)
 pSumm = data.frame(rbind(p1,p2,p3,p4,p5,p6,p7))
 pSumm$TILClass = rep(c("ATL", "DTL", "ITL"))
 
-load("./tracerx100/results/Diagnostic/ATLNeo/R_datafiles/exec_2.RData")
+load("./tracerx/tracerx100/results/Diagnostic/ATLNeo/R_datafiles/exec_2.RData")
 #stats per images - split the main final lists
-IHCDir<-'./tracerx100/results/Diagnostic/ATLNeo/Map/'
+IHCDir<-'./tracerx/tracerx100/results/Diagnostic/ATLNeo/Map/'
 CELLS<-dir(path = IHCDir,pattern = '*.csv')
 options(stringsAsFactors = FALSE)
 Da_list <- vector("list", length(CELLS))
@@ -1254,10 +1254,10 @@ dev.off()
 ########################################################################################################################
 
 #load TCGA TILs data
-load("./results/TILs/LUAD_TILClass.rdata")
+load("./tcga/results/TILs/LUAD_TILClass.rdata")
 tilLUAD = data.frame(mat.l)
 tilLUAD$file_name <- rownames(tilLUAD)
-luad <- read.csv(file = "./dev/immuneScoringPaper/LUADSummary_AllSlides.csv", stringsAsFactors = F)
+luad <- read.csv(file = "./tcga/dev/immuneScoringPaper/LUADSummary_AllSlides.csv", stringsAsFactors = F)
 luad$PATIENT_SCREENING_ID <- substr(luad$file_name, 1, 12)
 luad = luad[, c(3, 12:14, 16:18, 19)]
 luad = merge(luad, tilLUAD, all.x=T)
@@ -1268,7 +1268,7 @@ luadM = luad %>%
   group_by(bcr_patient_barcode) %>%
   summarise_all("mean")
 
-LUADmean = read.csv("./dev/immuneScoringPaper/results/LUADmean.csv")
+LUADmean = read.csv("./tcga/dev/immuneScoringPaper/results/LUADmean.csv")
 LUADclin = LUADmean[, c(8:10, 13, 22:26)]
 luadM= merge(luadM, LUADclin, all.y=T)
 
@@ -1276,7 +1276,7 @@ luadM$ATL_fibroRatio = luadM$Adjacent/luadM$stromal
 luadM$ITLR = luadM$Intra/luadM$tumour
 
 #summary of all immune gene signatures for TCGA luad samples
-load("./data/geneSignatures.RData")
+load("./tcga/data/geneSignatures.RData")
 LUADimmune <- Reduce(function(x, y) merge(x, y, by ="bcr_patient_barcode", all.x=TRUE), list(luadM, estLUAD2, BoLi2, Davoli))
 toCorr <- LUADimmune[, c(8:10, 28, 31, 40:42)]
 p.r <- cor_pmat(toCorr, method=c("spearman"), use="complete.obs")
@@ -1295,16 +1295,16 @@ dev.off()
 ########################################################################################################################
 
 #
-tx = read.csv("./tracerx100/results/trait/100xCombined_4.csv", stringsAsFactors = F)
-dFrac <- read.csv("./tracerx100/results/tumorFibro_frac/diagnostic/fracBoxcount-171130.csv", stringsAsFactors = F)
-diagnostic = read.csv("./tracerx100/results/trait/100xDiagnostic.csv", stringsAsFactors = F)
+tx = read.csv("./tracerx/tracerx100/results/trait/100xCombined_4.csv", stringsAsFactors = F)
+dFrac <- read.csv("./tracerx/tracerx100/results/tumorFibro_frac/diagnostic/fracBoxcount-171130.csv", stringsAsFactors = F)
+diagnostic = read.csv("./tracerx/tracerx100/results/trait/100xDiagnostic.csv", stringsAsFactors = F)
 dFrac$file_name <- substr(dFrac$file_name,1,nchar(dFrac$file_name)-12)
 diagnostic <- merge(diagnostic, dFrac, all.x = T)
 dF <- diagnostic[, c(3, 60:66)]
 tx <- merge(tx, dF, all.x = T)
 
-regional = read.csv("./tracerx100/results/trait/100xRegional_TGene.csv", stringsAsFactors = F )
-rFrac <- read.csv("./tracerx100/results/tumorFibro_frac/regional/controlBoxSize/fracBoxcount49-180105.csv", 
+regional = read.csv("./tracerx/tracerx100/results/trait/100xRegional_TGene.csv", stringsAsFactors = F )
+rFrac <- read.csv("./tracerx/tracerx100/results/tumorFibro_frac/regional/controlBoxSize/fracBoxcount49-180105.csv", 
                   stringsAsFactors = F)
 colnames(rFrac)[which(names(rFrac) == "FileName")] <- "file_name"
 colnames(rFrac)[which(names(rFrac) == "std")] <- "fd_std"
@@ -1350,11 +1350,11 @@ dev.off()
 con = 0.3225
 #20x  : 0.3225 um/pixel or 3.10 pixels/um
 distD = data.frame()
-Dir <- './tracerx100/results/tumorFibro_frac/regional/dist'
+Dir <- './tracerx/tracerx100/results/tumorFibro_frac/regional/dist'
 dirtmp <- dir(Dir)
 fflist <- grep('_dist.csv', dirtmp)
 for (i in 1:length(dirtmp[fflist])){
-  dist <- read.csv(paste0('./tracerx100/results/tumorFibro_frac/regional/dist/',dirtmp[fflist][i]))
+  dist <- read.csv(paste0('./tracerx/tracerx100/results/tumorFibro_frac/regional/dist/',dirtmp[fflist][i]))
   dist = dist[dist$min_dist_f_to_t>12,]
   dist$minDist_f_to_t_um = con*dist$min_dist_f_to_t
   dist$maxDist_f_to_t_um = con*dist$max_dist_f_to_t
@@ -1393,15 +1393,15 @@ dev.off()
 
 #repeat almost the same for TCGA samples
 #fig S11c
-luad <- read.csv(file = "X:/Dropbox (ICR)/yuanlab/Projects/lung/tcga/dev/immuneScoringPaper/LUADSummary_AllSlides.csv", stringsAsFactors = F)
-lusc <- read.csv(file = "X:/Dropbox (ICR)/yuanlab/Projects/lung/tcga/dev/immuneScoringPaper/LUSCSummary_AllSlides.csv", stringsAsFactors = F)
-load("X:/Dropbox (ICR)/yuanlab/Projects/lung/tcga/trait/TCGAmin.RData")
-LUSCmean = read.csv("X:/Dropbox (ICR)/yuanlab/Projects/lung/tcga/dev/immuneScoringPaper/results/LUSCmean.csv")
-LUADmean = read.csv("X:/Dropbox (ICR)/yuanlab/Projects/lung/tcga/dev/immuneScoringPaper/results/LUADmean.csv")
+luad <- read.csv(file = "./tcga/dev/immuneScoringPaper/LUADSummary_AllSlides.csv", stringsAsFactors = F)
+lusc <- read.csv(file = "./tcga/dev/immuneScoringPaper/LUSCSummary_AllSlides.csv", stringsAsFactors = F)
+load("./tcga/trait/TCGAmin.RData")
+LUSCmean = read.csv("./tcga/dev/immuneScoringPaper/results/LUSCmean.csv")
+LUADmean = read.csv("./tcga/dev/immuneScoringPaper/results/LUADmean.csv")
 clinLUAD = LUADmean[, c(8:10, 13:26)]
 clinLUSC = LUSCmean[, c(8:10, 13:26)]
-fracLUAD = read.csv("X:/Dropbox (ICR)/yuanlab/Projects/lung/tcga/results/tumorFibro_frac/fracBoxcount49_LUAD.csv")
-fracLUSC= read.csv("X:/Dropbox (ICR)/yuanlab/Projects/lung/tcga/results/tumorFibro_frac/fracBoxcount49_LUSC.csv")
+fracLUAD = read.csv(".tcga/results/tumorFibro_frac/fracBoxcount49_LUAD.csv")
+fracLUSC= read.csv("./tcga/results/tumorFibro_frac/fracBoxcount49_LUSC.csv")
 fracLUAD$bcr_patient_barcode = substr(fracLUAD$file_name ,1, 12)
 fracLUSC$bcr_patient_barcode = substr(fracLUSC$file_name ,1, 12)
 
@@ -1421,7 +1421,7 @@ fracLUSCsum = merge(clinLUSC, fracLUSCsum, all.x = T)
 tcgaBoth = rbind(fracLUADsum, fracLUSCsum2)
 tcgaBoth1 = rbind(LUADmean, LUSCmean)
 
-trait = read.csv(file = "X:/Dropbox (ICR)/yuanlab/Projects/lung/tcga/trait/PanTCGA_immuneClassV3.csv", stringsAsFactors = F)
+trait = read.csv(file = "./tcga/trait/PanTCGA_immuneClassV3.csv", stringsAsFactors = F)
 tcgaBoth = merge(tcgaBoth, trait, all.x = T)
 tcgaBoth = merge(tcgaBoth, tcgaBoth1[, c(8,2)], all.x = T)
 tcgaBoth = tcgaBoth[! tcgaBoth$immuneClass_2=="intermediate",]
@@ -1443,7 +1443,7 @@ dev.off()
 
 ##fig 5d + fig S12, fractal vs LOH for each HLA type
 ########################################################################################################################
-tx = read.csv("./tracerx100/results/trait/100xCombined_5.csv", stringsAsFactors = F)
+tx = read.csv("./tracerx/tracerx100/results/trait/100xCombined_5.csv", stringsAsFactors = F)
 tx$Histology[tx$Histology == "Squamous cell carcinoma"] <- "Squamous-cell carcinoma"
 tx$Histology[tx$Histology == "Invasive adenocarcinoma"] <- "Adenocarcinoma"
 tx = colNA(tx, "any.HLA.loss")
@@ -1496,7 +1496,7 @@ dev.off()
 
 ##fig S13, distribution of lym% between luad and lusc tx and tcga tumors
 ########################################################################################################################
-lymTCGA = read.csv("X:/Dropbox (ICR)/yuanlab/Projects/lung/tcga/trait/PanTCGA_immuneClassV3.csv", stringsAsFactors = F)
+lymTCGA = read.csv("./tcga/trait/PanTCGA_immuneClassV3.csv", stringsAsFactors = F)
 comList <- list( c("LUAD", "LUSC"))
 lymTCGA = lymTCGA[lymTCGA$disease_code=="LUAD" | lymTCGA$disease_code=="LUSC" ,]
 lymTCGA$lym_per = lymTCGA$lym_per*100
@@ -1509,7 +1509,7 @@ p2<-ggboxplot(lymTCGA, x = "disease_code", y = "lym_per", color = "disease_code"
   theme(legend.position="") + theme(text = element_text(size=18))+
   scale_color_manual(values=c("#98AED6", "#682A45", "orange", "#00AFBB"))
 
-regional = read.csv("./tracerx100/results/trait/100xRegional_TGene.csv", stringsAsFactors = F )
+regional = read.csv("./tracerx/tracerx100/results/trait/100xRegional_TGene.csv", stringsAsFactors = F )
 regional$Histology[regional$Histology == "Squamous cell carcinoma"] <- "LUSC"
 regional$Histology[regional$Histology == "Invasive adenocarcinoma"] <- "LUAD"
 regional$Histology[regional$Histology=="Carcinosarcoma"] <- "Other"
@@ -1531,7 +1531,7 @@ dev.off()
 
 ##fig 6a, summary statistics heatmap
 ########################################################################################################################
-load("./tracerx100/results/trait/trait5_08Oct2018.RData")
+load("./tracerx/tracerx100/results/trait/trait5_08Oct2018.RData")
 tx$Histology[tx$histology_group == "Squamous cell carcinoma"] <- "Squamous-cell carcinoma"
 tx$Histology[tx$histology_group == "Adenocarcinoma"] <- "Adenocarcinoma"
 tx$Histology[tx$histology_group=="Pleomorphic carcinoma"] <- "Z"
