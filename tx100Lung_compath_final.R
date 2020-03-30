@@ -1,7 +1,7 @@
 #### ###  #### ###
 ###Geospatial immune variability illuminates differential evolution of lung adenocarcinoma##
 ##ALL stat analyses and figures##
-## permanently available at: https://github.com/qalid7/tx100_compath
+##permanently available at: https://github.com/qalid7/tx100_compath
 #### ###  #### ### 20200310
 
 
