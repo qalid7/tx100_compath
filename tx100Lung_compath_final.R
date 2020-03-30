@@ -863,6 +863,10 @@ ggboxplot(reg2[! reg2$imC6=="intermediate" ,], x = "imC6", y = "cd8.score.danahe
   stat_compare_means(comparisons = comList, method = "wilcox")+
   theme(legend.position="") + theme(text = element_text(size=18))
 
+##NOTE
+#using R ver 6.3.3 the p-value for the SD/2 vs cd8.danaher was 1.5e-06 instead 3.7e-06
+##
+
 #now using the the same new 4 schemes, we test the pairwise genetic dist. 
 #we changed the immune classification 4 times, will the gentics dist in LUAD remain sign.? 
 
@@ -1128,6 +1132,9 @@ ggboxplot(diagnosticLUAD, x = "ClonalNeoMedian", y = "ATL_fibroRatio",
           add = "dotplot", border = "white")+
   stat_compare_means(comparisons = comList, method = "wilcox")+
   theme(legend.position="") + theme(text = element_text(size=18))
+##NOTE
+#using R ver 6.3.3 the p-value was 0.0068 instead of 0.0074
+##
 
 #deconvulted immune subsets in ATL vs DTL vs ITL (converted as percentages)
 comList = list(c("ATL", "DTL"), c("DTL", "ITL"), c("ATL", "ITL"))
