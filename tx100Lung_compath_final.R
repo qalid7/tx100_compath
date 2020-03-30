@@ -1,6 +1,7 @@
 #### ###  #### ###
 ###Geospatial immune variability illuminates differential evolution of lung adenocarcinoma##
 ##ALL stat analyses and figures##
+## permanently available at: https://github.com/qalid7/tx100_compath
 #### ###  #### ### 20200310
 
 
@@ -864,7 +865,7 @@ ggboxplot(reg2[! reg2$imC6=="intermediate" ,], x = "imC6", y = "cd8.score.danahe
   theme(legend.position="") + theme(text = element_text(size=18))
 
 ##NOTE
-#using R ver 6.3.3 the p-value for the SD/2 vs cd8.danaher was 1.5e-06 instead 3.7e-06
+#using R ver 3.6.3 the p-value for the SD/2 vs cd8.danaher was 1.5e-06 instead 3.7e-06
 ##
 
 #now using the the same new 4 schemes, we test the pairwise genetic dist. 
@@ -1133,7 +1134,7 @@ ggboxplot(diagnosticLUAD, x = "ClonalNeoMedian", y = "ATL_fibroRatio",
   stat_compare_means(comparisons = comList, method = "wilcox")+
   theme(legend.position="") + theme(text = element_text(size=18))
 ##NOTE
-#using R ver 6.3.3 the p-value was 0.0068 instead of 0.0074
+#using R ver 3.6.3 the p-value was 0.0068 instead of 0.0074
 ##
 
 #deconvulted immune subsets in ATL vs DTL vs ITL (converted as percentages)
