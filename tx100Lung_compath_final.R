@@ -3,6 +3,18 @@
 ##ALL stat analyses and figures##
 #### ###  #### ### 20200310
 
+
+#R version notes
+############# 
+#mostly developed on R 3.5.1, but also tested on R 3.6.3 on 20200329
+
+#for latest R if you struggle with ComplexHeatmap, do this: 
+#R version 3.6.3
+#if (!requireNamespace("BiocManager", quietly=TRUE))
+#  install.packages("BiocManager")
+#BiocManager::install("ComplexHeatmap")
+#############
+
 #libraries 
 ############# 
 library("survival")
@@ -21,6 +33,7 @@ library(RColorBrewer)
 library(reshape2)
 library(ggstatsplot)
 library(circlize)
+library(psych)
 #############
 
 #Functions
@@ -193,6 +206,24 @@ pDotplot = ggdotchart(r2, x = "PublicationID", y = "lymphocytes_per",
            #label = min(regionalT$lymphocytes_per),
            #y.text.col = TRUE,                            
            ggtheme = theme_pubr())
+
+#and the heatmap
+txS8=tx
+txS8$Histology[txS8$Histology=="Other"] <- "Z"
+txS8 = txS8[order(txS8$lymphocytes_per_min, decreasing = F),]
+txS8 = txS8[order(txS8$Histology, decreasing = F),]
+txS8$DFS_yes[txS8$DFS_censor_variable==1] <- txS8$DFS_time_days
+txS8$DFS_no[txS8$DFS_censor_variable==0] <- txS8$DFS_time_days
+
+Heatmap(txS8$cd8_per, name = "CD8", width = unit(2.85, "mm"), 
+          cluster_rows = F, cluster_columns = F, gap = unit(2, "mm"),
+          col = colorRamp2(c(0, 17), c("#F2E2E2", "#8E0000")))+
+  Heatmap(txS8$cd4_per, name = "CD4", width = unit(2.85, "mm"), 
+          cluster_rows = F, cluster_columns = F, gap = unit(2, "mm"),
+          col = colorRamp2(c(0, 28), c("#E3F0E2", "#067C00")))+
+  Heatmap(txS8$foxp3_per, name = "FOXP3", width = unit(2.85, "mm"), 
+          cluster_rows = F, cluster_columns = F, gap = unit(2, "mm"),
+          col = colorRamp2(c(0, 21), c("#F9E2F2", "#CC008E")))
 #############
 
 #2c-d: deep learning vs Danaher immune signatures from Rosenthal et al 2019
@@ -220,6 +251,7 @@ p + geom_boxplot()+scale_fill_manual(values = c("blue2", "red2"))+
   theme(axis.text.x = element_text(angle = 45, hjust = 1))+
   xlab("Immune signature") + ylab("Estimated infiltration (Danaher et al)") 
 
+#below for the stats. sign. for above merged panel 
 comList <- list( c("cold", "hot"))
 p1=ggboxplot(rC, x = "immuneClass_2", 
              y = "cd8", color = "immuneClass_2", ylab = "CD8",
@@ -291,11 +323,12 @@ p14=ggboxplot(rC, x = "immuneClass_2",
               add = "jitter", border = "white",palette = c("blue2", "red2"))+
   stat_compare_means(comparisons = comList, method = "wilcox")+
   theme(legend.position="") + theme(text = element_text(size=18))+theme(axis.title.x=element_blank())
+
+#p-value correction to be annotated on the figure
 p = c(5.8e-5, 1.5e-6, 9.4e-9, 3.4e-5, 0.00014, 0.018, 1.4e-5, 
       0.007, 0.0029, 6.6e-6, 4e-4, 2.9e-6, 3.3e-6, 9.1e-7)
 p.adjust(p, method = "BH")
-grid.arrange(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, ncol=7)
-
+#grid.arrange(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, ncol=7)
 
 #############
 
@@ -592,12 +625,13 @@ ggsurvplot(fit, data = lattice, conf.int = FALSE,
            tables.y.text = TRUE, risk.table.title = "Number at Risk",
            tables.x.text = "", xlim = c(0, 6345),
            xlab = "Days to Death or Recurrence", ylab = "Disease-free Survival")
+surv_pvalue(fit)
 
 #Fig 3g#
 tmp_model <- coxph(Surv(time_to_rfs, rfs_status == '1') ~ coldP3 + age_surgery + gender + pack_years + stage + Adjuvant.therapy + nTotalRegions, data=tmplatt)
 ggforest(tmp_model, data = NULL, main = "", fontsize = 0.7, refLabel = "", noDigits = 2)
 
-#Fig 3g# - caption, n=827
+#Fig 3g# - caption info: n=827
 tmp_model <- coxph(Surv(time_to_rfs, rfs_status == '1') ~ coldP3 + age_surgery + gender + pack_years + stage + Adjuvant.therapy + nTotalRegions, data=tmp)
 ggforest(tmp_model, data = NULL, main = "", fontsize = 0.7, refLabel = "", noDigits = 2)
 
@@ -611,7 +645,7 @@ tmp2 = tmplatt[!is.na(tmplatt$largest_tumour_size),]
 tmp_model <- coxph(Surv(time_to_rfs, rfs_status == '1') ~ coldP3 + age_surgery + gender + pack_years + stage + Adjuvant.therapy + largest_tumour_size, data=tmp2)
 ggforest(tmp_model, data = NULL, main = "", fontsize = 0.7, refLabel = "", noDigits = 2)
 
-#Fig S5d# caption, n=815
+#Fig S5d# caption info: n=815
 tmp3 = tmp
 tmp3 = tmp[!is.na(tmp$age_surgery) & !is.na(tmp$gender) & !is.na(tmp$largest_tumour_size) &
                     !is.na(tmp$stage) &
@@ -881,10 +915,10 @@ tx_genomic_pairdist_extended_ch = NULL
 #panel d: 
 #distribution of lym% in tx and LATTICe-A for histology subtypes
 ggdensity(regional, x = "lymphocytes_per", color = "Histology", palette = c("#98AED6", "#682A45", "black"),
-          add = "median", rug = TRUE) +
+          add = "mean", rug = TRUE) +
   theme(legend.position="none")
 ggdensity(lt, x = "lymphocytes_per", color = "#98AED6", 
-          add = "median", rug = TRUE) +
+          add = "mean", rug = TRUE) +
   theme(legend.position="none")
 
 comList <- list( c("LUAD", "LUSC"))
@@ -999,6 +1033,7 @@ p5 = ggboxplot(r1[r1$Histology=="LUSC",],
 
 grid.arrange(p1, p2, p3, p4, p5, ncol=5)
 
+#p-value correction as shown in the final figure
 #correction LUAD region level analysis
 p=c(0.0043, 0.074, 0.0019, 0.0029)
 p.adjust(p, method = "BH")
@@ -1039,6 +1074,7 @@ ggboxplot(tx[tx$Histology=="LUAD",], x = "any.HLA.C.loss", y = "fd_max",
 fit <- glm(fd_max ~ factor(any.HLA.loss) + ClonalNeo  , data=txf[txf$Histology=="LUAD",])
 summary(fit)
 #repeat the above for any.HLA.A.loss, any.HLA.B.loss, any.HLA.C.loss,
+#p-value correction as shown in the final figure
 p=c(0.00249, 0.00948, 0.0968, 0.0331)
 p.adjust(p, method = "BH")
 
@@ -1088,8 +1124,8 @@ diagnosticLUAD$ClonalNeoMedian[diagnosticLUAD$ClonalNeo<quantile(diagnosticLUAD$
 comList <- list( c(">=Median", "<Median"))
 ggboxplot(diagnosticLUAD, x = "ClonalNeoMedian", y = "ATL_fibroRatio", 
           xlab = "Clonal neoantigens", ylab = "Adjacent-tumor lymphocytes/stroma", 
-          color = "ClonalNeoMedian", palette = c("red2", "blue"), #title = "LUAD",
-          add = "jitter", border = "white")+
+          color = "ClonalNeoMedian", palette = c("blue", "red2"), #title = "LUAD",
+          add = "dotplot", border = "white")+
   stat_compare_means(comparisons = comList, method = "wilcox")+
   theme(legend.position="") + theme(text = element_text(size=18))
 
@@ -1124,7 +1160,7 @@ ggcorrplotModified(corRLUAD[7:11, 1:6], lab = T, sig.level=0.05, insig ="blank",
                    colors = c("#4DBBD5B2","grey98","#DC0000B2"), legend.title = "Spearman Corr",
                    p.mat = p.rLUAD[7:11, 1:6])
 
-#S7 HE-IHC reg. eval. 
+#S8 HE-IHC reg. eval. 
 ggdensity(reg_eval, x = "distance", color = "purple", xlab = "HE-IHC registration distance (um)",
           add = "mean", rug = TRUE)
 #############
