@@ -1,7 +1,7 @@
 #### ###  #### ###
 ###Geospatial immune variability illuminates differential evolution of lung adenocarcinoma##
 ##ALL stat analyses and figures##
-##permanently available at: https://github.com/qalid7/tx100_compath
+## permanently available at: https://github.com/qalid7/tx100_compath
 #### ###  #### ### 20200310
 
 
@@ -593,6 +593,12 @@ grid.arrange(u1, u3, u2, ncol=1)
 
 #3e,g and S5c, d, e: survival using the number of cold regions in LATTICe-A (validation cohort)
 #############
+
+#reported in text, N cold as cont. 
+tmp_model <- coxph(Surv(time_to_rfs, rfs_status == '1') ~ cold , data=lattice)
+ggforest(tmp_model, data = NULL, main = "", fontsize = 0.7, refLabel = "", noDigits = 2)
+summary(tmp_model) 
+
 tmp <- lattice
 tmp$coldP3 = as.factor(as.character(tmp$coldP3))
 tmp$gender = as.factor(as.character(tmp$gender))
@@ -668,7 +674,9 @@ lattice_lym = merge(lattice, rU2)
 fit <- coxph(Surv(time_to_rfs, rfs_status)~cold, data = lattice_lym)
 ggforest(fit, data=lattice_lym)
 summary(fit)
-fit <- coxph(Surv(time_to_rfs, rfs_status)~coldP3, data = lattice_lym)
+fit <- coxph(Surv(time_to_rfs, rfs_status)~col
+             
+             dP3, data = lattice_lym)
 ggforest(fit, data=lattice_lym)
 summary(fit)
 lattice_lym$coldProp = lattice_lym$cold/lattice_lym$nTotalRegions
@@ -690,7 +698,7 @@ summaryPs <- data.frame(
            0.459, 0.647, 0.732),
   lower95 = c(1.1, 1.2, 0.97, 0.98, 
               0.97, 0.97, 0.97),
-  upper95 = c(1.2, 1.7, 1.2, 1.1, 
+  upper95 = c(1.2, 1.7, 1.3, 1.1, 
               1, 1, 1), 
   hr = c(1.1, 1.5, 0.99, 1, 
          0.99, 0.99, 1))
@@ -830,14 +838,16 @@ tx2$coldP = as.factor(as.character(tx2$coldP))
 tx3$coldP = as.factor(as.character(tx3$coldP))
 tx6$coldP = as.factor(as.character(tx6$coldP))
 
-fit <- coxph(Surv(DFS_time_days, DFS_censor_variable)~coldP+age+sex+pack_years_calculated+Histology+pathologyTNM2+Adjuvant.therapy+ClonalNeoUQ, data = tx0)
-ggforest(fit, data=tx0, main = "Threshold: No intermediate zone")
-fit <- coxph(Surv(DFS_time_days, DFS_censor_variable)~coldP+age+sex+pack_years_calculated+Histology+pathologyTNM2+Adjuvant.therapy+ClonalNeoUQ, data = tx2)
-ggforest(fit, data=tx2, main = "Threshold: SD/2")
-fit <- coxph(Surv(DFS_time_days, DFS_censor_variable)~coldP+age+sex+pack_years_calculated+Histology+pathologyTNM2+Adjuvant.therapy+ClonalNeoUQ, data = tx3)
-ggforest(fit, data=tx3, main = "Threshold: SD/3")
-fit <- coxph(Surv(DFS_time_days, DFS_censor_variable)~coldP+age+sex+pack_years_calculated+Histology+pathologyTNM2+Adjuvant.therapy+ClonalNeoUQ, data = tx6)
-ggforest(fit, data=tx6, main = "Threshold: SD/6")
+fit <- coxph(Surv(DFS_time_days, DFS_censor_variable)~coldP+age+sex+pack_years_calculated+Histology+pathologyTNM2+Adjuvant.therapy+ClonalNeoUQ+nTotalRegions, data = tx0)
+a=ggforest(fit, data=tx0, main = "Threshold: No intermediate zone")
+fit <- coxph(Surv(DFS_time_days, DFS_censor_variable)~coldP+age+sex+pack_years_calculated+Histology+pathologyTNM2+Adjuvant.therapy+ClonalNeoUQ+nTotalRegions, data = tx2)
+b=ggforest(fit, data=tx2, main = "Threshold: s.d./2")
+fit <- coxph(Surv(DFS_time_days, DFS_censor_variable)~coldP+age+sex+pack_years_calculated+Histology+pathologyTNM2+Adjuvant.therapy+ClonalNeoUQ+nTotalRegions, data = tx3)
+c=ggforest(fit, data=tx3, main = "Threshold: s.d./3")
+fit <- coxph(Surv(DFS_time_days, DFS_censor_variable)~coldP+age+sex+pack_years_calculated+Histology+pathologyTNM2+Adjuvant.therapy+ClonalNeoUQ+nTotalRegions, data = tx6)
+d=ggforest(fit, data=tx6, main = "Threshold: s.d./6")
+
+grid.arrange(a,c,b,d, ncol=2)
 
 #cd8 danaher differnce in hot vs cold regions using all thresholds
 comList <- list( c("cold", "hot"))
